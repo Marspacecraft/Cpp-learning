@@ -89,7 +89,71 @@ public:
 		}
 		return ret;
 	}
+	colorcout& cursor_up(int n)
+	{
+		std::cout << "\033[" << n << "A";
+		return *this;
+	}
+	
+	colorcout& cursor_down(int n)
+	{
+		std::cout << "\033[" << n << "B";
+		return *this;
+	}
 
+	colorcout& cursor_right(int n)
+	{
+		std::cout << "\033[" << n << "C";
+		return *this;
+	}
+
+	colorcout& cursor_left(int n)
+	{
+		std::cout << "\033[" << n << "D";
+		return *this;
+	}
+
+	colorcout& cursor_set(int x,int y)
+	{
+		std::cout << "\033[" << y << ":" << x << "H";
+		return *this;
+	}
+
+	colorcout& cursor_show(int x,int y)
+	{
+		std::cout << "\033[?25h";
+		return *this;
+	}
+
+	colorcout& cursor_hide(int x,int y)
+	{
+		std::cout << "\033[?25l";
+		return *this;
+	}
+
+	colorcout& cursor_storage()
+	{
+		std::cout << "\033[s";
+		return *this;
+	}
+
+	colorcout& cursor_recovery()
+	{
+		std::cout << "\033[u";
+		return *this;
+	}
+
+	colorcout& cursor_cleardown()
+	{
+		std::cout << "\033[K";
+		return *this;
+	}
+	
+	colorcout& cls()
+	{
+		std::cout << "\033[2J";
+		return *this;
+	}
 	// 输出一个色块
 	colorcout& colorblock(cbackgroud color)
 	{
@@ -215,6 +279,15 @@ std::ostream& operator<<(std::ostream & out, const A& a)
 	return out;
 }
 
+void blockout()
+{
+	for(int i=0;i<30;i++)
+	{
+		ccout.colorblock(static_cast<cbackgroud>((random()%8) + 40));
+	}
+	ccout<<"\n";
+}
+
 int main()
 {
 	//ccout.color(cfont::RED) << A(1) << "\tHello\t"<< "\n";
@@ -243,8 +316,21 @@ int main()
 
 	//ccout << A(1) << "Hello World!\n";
 
-	ccout.color(cfont::BLUE) << "Hello" << ccout.colorblock(cbackgroud::CYAN)<< ccout.color(cfont::RED) << "World!\n"
-		<< ccout << "MarSpaceCraft\n"; 
+	//ccout.color(cfont::BLUE) << "Hello" << ccout.colorblock(cbackgroud::CYAN)<< ccout.color(cfont::RED) << "World!\n"
+	//	<< ccout << "MarSpaceCraft\n"; 
 
+	srand(time(0));
+
+	ccout.cursor_set(0,0);
+	ccout.cls();
+
+	for(int i=0;i<10;i++)
+	{
+		for(int j=0;j<10;j++)
+			blockout();
+		ccout.cursor_up(10);
+		usleep(500000);
+	}
+	
 	return 0;
 }
