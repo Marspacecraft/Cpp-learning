@@ -3,6 +3,14 @@
 
 #include <iostream>
 
+/*****************************
+	终端需要支持ANSI转义序列
+	一般linux终端都会支持
+	win10之前的终端可能不支持
+	https://web.archive.org/web/20060206022229/http://enterprise.aacc.cc.md.us/~rhs/ansi.html
+*****************************/
+
+
 enum class f_color:int
 {
 	NONE=0,     	// 默认
@@ -77,10 +85,34 @@ enum class c_cmd:int
 
 enum class cc_command:int
 {
-	CLS=0,		// 清屏
-	FLUSH,		// 清缓存
-	BEEP,		// 警告音
+	CLS=0,			// 清屏
+	FLUSH,			// 清缓存
+	BEEP,			// 警告音
+	ECHO_ENABLE,	// 打开终端输入回显 system("stty echo");
+	ECHO_DISABLE,	// 关闭终端输入回显 system("stty -echo");
 };
+
+enum class s_cmd:int
+{
+	SCREEN_40X25_mono_txt=0,	//40×25 黑白（文本）
+	SCREEN_40X25_color_txt,		//40×25 彩色（文本）
+	SCREEN_80X25_mono_txt,		//80×25 黑白（文本）
+	SCREEN_80X25_color_txt,		//80×25 彩色（文本）
+	SCREEN_320X200_4color_grap,	//320×200 4 色（图形）
+	SCREEN_320X200_mono_grap,	//320×200 黑白（图形）
+	SCREEN_640X200_mono_grap,	//640×200 黑白（图形）
+	SCREEN_AUTO,				//启用自动换行
+	SCREEN_320X200_color_grap,	//320×200 彩色（图形）
+	SCREEN_640X200_16color_grap,//640×200 彩色（16 色图形）
+	SCREEN_640X350_mono_grap,	//640×350 黑白（2 色图形）
+	SCREEN_640X350_16color_grap,//640×350 彩色（16 色图形）
+	SCREEN_640X480_mono_grap,	//640×480 黑白（2 色图形）
+	SCREEN_640X480_16color_grap,//640×480 彩色（16 色图形）
+	SCREEN_320X200_256color_grap,//320×200 彩色（256 色图形）
+	SCREEN_RESET,				// 重置上面上次模式， reset AUTO 为关闭自动换行
+};
+
+typedef f_backcolor b_color;
 
 class colorcout
 {
@@ -112,7 +144,7 @@ public:
 
 	f_color GetColor(){return _font;}
 	f_backcolor GetBackColor(){return _bkgd;}
-
+	std::string GetCmd();
 	/*****************************
 		光标操作接口
 	*****************************/
@@ -121,17 +153,27 @@ public:
 	colorcout& cursor(c_cmd,int,int);
 
 	/*****************************
+		色块接口
+	*****************************/
+	// 当前位置输出一个色块
+	colorcout& colorblock(b_color);
+	// (x,y)位置输出一个色块
+	colorcout& colorblock(b_color,int x,int y);
+	// (x,y)位置输出n个色块
+	colorcout& colorblock(b_color,int x,int y,int n);
+
+	/*****************************
 		命令接口
 	*****************************/
 	colorcout& command(cc_command);
 
 	/*****************************
-		色块接口
+		屏幕接口
 	*****************************/
-
+	colorcout& screen(s_cmd);
 
 private:
-	std::string GetCmd();
+
 
 	colorcout() = default;
 	f_color _font;

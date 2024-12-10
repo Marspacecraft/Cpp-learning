@@ -1,5 +1,6 @@
 
 #include <iostream>
+#include <unistd.h>
 #include "ccout.h"
 
 
@@ -43,11 +44,19 @@ int main()
 	//ccout.font(f_cmd::UNDERSCORE,f_color::HOLD,f_backcolor::YELLOW) << A(1)<< "\tHello\t"<< "\n";
 	//ccout.font(f_cmd::HOLD,f_color::NONE,f_backcolor::HOLD) << A(1)<< "\tHello\t"<< "\n";
 
-    int i;
-	for(i=0;i<30;i++)
-		ccout.command(cc_command::BEEP); 
+	//ccout.command(cc_command::BEEP); 
 
+	//ccout.colorblock(b_color::RED);
+	//ccout.colorblock(b_color::BLUE,0,1);
+	//ccout.colorblock(b_color::YELLOW,10,10,10);
 
+	//ccout.command(cc_command::ECHO_DISABLE);
+	//ccout.font(f_color::RED)<<"Echo Closed!\n";
+	//ccout.command(cc_command::FLUSH);
+	//sleep(10);
+	//ccout.font(f_color::RED)<<"Echo Opened!\n";
+	//ccout.command(cc_command::ECHO_ENABLE);
+	//sleep(10);
 
 	return 0;
 }

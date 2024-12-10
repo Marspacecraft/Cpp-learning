@@ -1,5 +1,6 @@
 
-
+#include <termios.h>
+#include <unistd.h>
 #include "./ccout.h"
 
 colorcout& colorcout::font(f_color font)
@@ -176,6 +177,25 @@ colorcout& colorcout::cursor(c_cmd cmd,int x,int y)
 }
 
 
+static int set_echo_mode(int option)
+{
+	int err;
+	struct termios term;
+	if(tcgetattr(STDIN_FILENO ,&term)==-1)
+		return -1;
+	
+	if(option)
+		term.c_lflag |=(ECHO | ECHOE | ECHOK | ECHONL);
+	else
+		term.c_lflag &=~(ECHO | ECHOE | ECHOK | ECHONL);
+
+	err=tcsetattr(STDIN_FILENO,TCSAFLUSH,&term);
+	if(err==-1 && err==EINTR)
+		return 1; 
+	
+	return 0;
+}
+
 colorcout& colorcout::command(cc_command cmd)
 {
 	switch(cmd)
@@ -189,8 +209,64 @@ colorcout& colorcout::command(cc_command cmd)
 		case cc_command::BEEP:
 		std::cout << '\a';
 		break;
+		case cc_command::ECHO_DISABLE:
+		set_echo_mode(0);
+		break;
+		case cc_command::ECHO_ENABLE:
+		set_echo_mode(1);
+		break;
 	}
 
+	return *this;
+}
+
+
+
+colorcout& colorcout::colorblock(b_color color)
+{
+	std::cout <<"\033[0;" <<static_cast<int>(color) << "m "<<"\033[0m";
+	return *this;
+}
+
+colorcout& colorcout::colorblock(b_color color,int x,int y)
+{
+	cursor(c_cmd::SET_x_y,x,y);
+	colorblock(color);
+	return *this;
+}
+colorcout& colorcout::colorblock(b_color color,int x,int y,int n)
+{
+	std::string s("m");
+
+	cursor(c_cmd::SET_x_y,x,y);
+	std::cout <<"\033[0;" <<static_cast<int>(color);
+
+	for(int i=0;i<n;i++)
+		s.append(" ");
+	std::cout << s << "\033[0m";
+	return *this;
+}
+
+colorcout& colorcout::screen(s_cmd cmd)
+{
+	static s_cmd _cmd = s_cmd::SCREEN_RESET;
+
+	if(_cmd == cmd)
+	{
+		return *this;
+	}
+
+	if(s_cmd::SCREEN_RESET == cmd)
+	{
+		std::cout << "\033[=" << static_cast<int>(_cmd)<<"l";
+		_cmd = s_cmd::SCREEN_RESET;
+		return *this;
+	}
+
+	if(s_cmd::SCREEN_RESET != _cmd)
+		std::cout << "\033[=" << static_cast<int>(_cmd)<<"l";
+	std::cout << "\033[=" << static_cast<int>(cmd)<<"h";
+	_cmd = cmd;
 	return *this;
 }
 
@@ -202,19 +278,4 @@ colorcout& operator<<(colorcout& out,colorcout& a)
 }
 
 
-
-
-/*	
-	// 输出一个色块
-	colorcout& colorblock(cbackgroud color)
-	{
-		if(cbackgroud::BLOCK <= color)
-		{
-			std::cout << "\033[0;" << static_cast<int>(color) << "m "<<"\033[0m" ;
-		}
-
-		return *this;
-	}
-
-*/
 
