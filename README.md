@@ -3,8 +3,6 @@
 实现矩阵加、减、乘、转置
 
 # ccout彩色cout
-实现设置cout字体的颜色、背景、加粗、斜体等功能  
-使用前调用`system("cls")`函数清屏，保证显示效果  
-
+[ColorCout](https://github.com/Marspacecraft/ColorCout)
 # progressbar进度条类   
 实现进度条前进、后退、横条、竖条及彩色功能
