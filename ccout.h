@@ -43,18 +43,18 @@ class f_cmd
 {
 public:
 	typedef unsigned int ccmd_type;
-	static const ccmd_type NONE=0;						//默认
-	static const ccmd_type DEFAULT=0x00001 << 0;		// 取消格式
-	static const ccmd_type LIGHTUP=0x00001 << 1;		// 高亮 
-	static const ccmd_type LIGHTDOWN=0x00001 << 2;		// 变暗
-	static const ccmd_type ITALICS=0x00001 << 3;		// 斜体
-	static const ccmd_type UNDERSCORE=0x00001 << 4;		// 下划线
-	static const ccmd_type BLINK=0x00001 << 5;			// 闪烁
-	static const ccmd_type FASTBLINK=0x00001 << 6;		// 快闪
-	static const ccmd_type REFLECT=0x00001 << 7;		// 反显
-	static const ccmd_type BLANKING=0x00001 << 8;		// 消隐
-	static const ccmd_type SLASH=0x00001 << 9;			// 中横线
-	static const ccmd_type HOLD=0xffffff;				// 保持
+	static const ccmd_type NONE;		//默认
+	static const ccmd_type DEFAULT;		// 取消格式
+	static const ccmd_type LIGHTUP;		// 高亮 
+	static const ccmd_type LIGHTDOWN;	// 变暗
+	static const ccmd_type ITALICS;		// 斜体
+	static const ccmd_type UNDERSCORE;	// 下划线
+	static const ccmd_type BLINK;		// 闪烁
+	static const ccmd_type FASTBLINK;	// 快闪
+	static const ccmd_type REFLECT;		// 反显
+	static const ccmd_type BLANKING;	// 消隐
+	static const ccmd_type SLASH;		// 中横线
+	static const ccmd_type HOLD;		// 保持
 };
 
 enum class c_cmd:int
@@ -112,7 +112,45 @@ enum class s_cmd:int
 	SCREEN_RESET,				// 重置上面上次模式， reset AUTO 为关闭自动换行
 };
 
-typedef f_backcolor b_color;
+
+typedef f_color b_color;
+enum class b_block: int
+{
+	//https://symbl.cc/cn/unicode-table/#block-elements
+
+	BLOCK_DOWN_1_8 = 0,	// "▁" 
+	BLOCK_DOWN_2_8,		// "▂" 
+	BLOCK_DOWN_3_8,		// "▃" 
+	BLOCK_DOWN_4_8,		// "▄" 
+	BLOCK_DOWN_5_8,		// "▅"
+	BLOCK_DOWN_6_8,		// "▆"
+	BLOCK_DOWN_7_8,		// "▇"
+	BLOCK_DOWN_8_8,		// "█"
+	BLOCK_UP_4_8,		// "▀" 
+
+	BLOCK_LEFT_1_8,		// "▏"
+	BLOCK_LEFT_2_8,		// "▎"
+	BLOCK_LEFT_3_8,		// "▍"
+	BLOCK_LEFT_4_8,		// "▌"
+	BLOCK_LEFT_5_8,		// "▋"
+	BLOCK_LEFT_6_8,		// "▊"
+	BLOCK_LEFT_7_8,		// "▉"
+	BLOCK_LEFT_8_8,		// "█"
+	BLOCK_RIGHT_4_8,	// "▐"
+
+	EDGE_1_1,			// "▖" 
+	EDGE_1_2,			// "▘"
+	EDGE_1_3,			// "▝" 
+	EDGE_1_4,			// "▗" 
+	EDGE_2_1,			// "▚"
+	EDGE_2_2,			// "▞" 
+	EDGE_3_1,			// "▙" 
+	EDGE_3_2,			// "▛" 
+	EDGE_3_3,			// "▜" 
+	EDGE_3_4,			// "▟" 
+	EDGE_FULL,			// "■" 
+	
+};
 
 class colorcout
 {
@@ -153,14 +191,18 @@ public:
 	colorcout& cursor(c_cmd,int,int);
 
 	/*****************************
+		unicode图形接口
+	*****************************/
+	colorcout& block(b_block,b_color=b_color::NONE);
+	colorcout& block(b_block,int x,int y,b_color=b_color::NONE);
+	colorcout& block(b_block,int x,int y,int n,b_color=b_color::NONE);
+
+	/*****************************
 		色块接口
 	*****************************/
-	// 当前位置输出一个色块
-	colorcout& colorblock(b_color);
-	// (x,y)位置输出一个色块
-	colorcout& colorblock(b_color,int x,int y);
-	// (x,y)位置输出n个色块
-	colorcout& colorblock(b_color,int x,int y,int n);
+	colorcout& colorblock(b_color,int n=1);
+	colorcout& colorblock(b_color,int x,int y,int n=1);
+
 
 	/*****************************
 		命令接口

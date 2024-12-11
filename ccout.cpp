@@ -3,6 +3,91 @@
 #include <unistd.h>
 #include "./ccout.h"
 
+
+const f_cmd::ccmd_type f_cmd::NONE=0;						//默认
+const f_cmd::ccmd_type f_cmd::DEFAULT=0x00001 << 0;		// 取消格式
+const f_cmd::ccmd_type f_cmd::LIGHTUP=0x00001 << 1;		// 高亮 
+const f_cmd::ccmd_type f_cmd::LIGHTDOWN=0x00001 << 2;		// 变暗
+const f_cmd::ccmd_type f_cmd::ITALICS=0x00001 << 3;		// 斜体
+const f_cmd::ccmd_type f_cmd::UNDERSCORE=0x00001 << 4;		// 下划线
+const f_cmd::ccmd_type f_cmd::BLINK=0x00001 << 5;			// 闪烁
+const f_cmd::ccmd_type f_cmd::FASTBLINK=0x00001 << 6;		// 快闪
+const f_cmd::ccmd_type f_cmd::REFLECT=0x00001 << 7;		// 反显
+const f_cmd::ccmd_type f_cmd::BLANKING=0x00001 << 8;		// 消隐
+const f_cmd::ccmd_type f_cmd::SLASH=0x00001 << 9;			// 中横线
+const f_cmd::ccmd_type f_cmd::HOLD=0xffffff;				// 保持
+
+
+static const char* sg_block[] = 
+{	
+	"▁",// 0 BLOCK_DOWN_1_8
+	"▂",// 1 BLOCK_DOWN_2_8
+	"▃",// 2 BLOCK_DOWN_3_8
+	"▄",// 3 BLOCK_DOWN_4_8
+	"▅",// 4 BLOCK_DOWN_5_8
+	"▆",// 5 BLOCK_DOWN_6_8
+	"▇",// 6 BLOCK_DOWN_7_8
+	"█",// 7 BLOCK_DOWN_8_8 
+	"▀",// 8 BLOCK_UP_4_8 
+
+	"▏",// 9 BLOCK_LEFT_1_8
+	"▎",// 10 BLOCK_LEFT_2_8
+	"▍",// 11 BLOCK_LEFT_3_8
+	"▌",// 12 BLOCK_LEFT_4_8
+	"▋",// 13 BLOCK_LEFT_5_8
+	"▊",// 14 BLOCK_LEFT_6_8
+	"▉",// 15 BLOCK_LEFT_7_8
+	"█",// 16 BLOCK_LEFT_8_8
+	"▐",// 17 BLOCK_RIGHT_4_8
+
+	"▖",// 18 EDGE_1_1
+	"▘",// 19 EDGE_1_2
+	"▝",// 20 EDGE_1_3
+	"▗",// 21 EDGE_1_4
+
+	"▚",// 22 EDGE_2_1
+	"▞",// 22 EDGE_2_2
+	"▙",// 23 EDGE_3_1
+	"▛",// 24 EDGE_3_2
+	"▜",// 25 EDGE_3_3
+	"▟",// 26 EDGE_3_4
+	"■",// 27 EDGE_FULL
+};
+
+
+/*
+const char b_type::BLOCK_DOWN_1_8[] = "▁"; 
+const char b_type::BLOCK_DOWN_2_8[] = "▂"; 
+const char b_type::BLOCK_DOWN_3_8[] = "▃"; 
+const char b_type::BLOCK_DOWN_4_8[] = "▄"; 
+const char b_type::BLOCK_DOWN_5_8[] = "▅";
+const char b_type::BLOCK_DOWN_6_8[] = "▆"; 
+const char b_type::BLOCK_DOWN_7_8[] = "▇"; 
+
+const char b_type::BLOCK_LEFT_1_8[] = "▏";
+const char b_type::BLOCK_LEFT_2_8[] = "▎";
+const char b_type::BLOCK_LEFT_3_8[] = "▍";
+const char b_type::BLOCK_LEFT_4_8[] = "▌";
+const char b_type::BLOCK_LEFT_5_8[] = "▋";
+const char b_type::BLOCK_LEFT_6_8[] = "▊";
+const char b_type::BLOCK_LEFT_7_8[] = "▉";
+
+const char b_type::BLOCK_UP_4_8[] = "▀"; 
+const char b_type::BLOCK_RIGHT_4_8[] = "▐";
+const char b_type::BLOCK_FULL[] = "█"; 
+
+const char b_type::EDGE_1_1[] = "▖"; 
+const char b_type::EDGE_1_2[] = "▘";
+const char b_type::EDGE_1_3[] = "▝"; 
+const char b_type::EDGE_1_4[] = "▗";
+const char b_type::EDGE_2_1[] = "▚";
+const char b_type::EDGE_2_3[] = "▞";
+const char b_type::EDGE_3_1[] = "▙";
+const char b_type::EDGE_3_2[] = "▛";
+const char b_type::EDGE_3_3[] = "▜";
+const char b_type::EDGE_3_4[] = "▟";
+const char b_type::EDGE_FULL[] = "■";
+*/
 colorcout& colorcout::font(f_color font)
 {
 	static colorcout fontcout;
@@ -222,19 +307,20 @@ colorcout& colorcout::command(cc_command cmd)
 
 
 
-colorcout& colorcout::colorblock(b_color color)
+colorcout& colorcout::block(b_block type,b_color color)
 {
-	std::cout <<"\033[0;" <<static_cast<int>(color) << "m "<<"\033[0m";
+	std::cout <<"\033[0;" <<static_cast<int>(color) << "m"<<sg_block[static_cast<int>(type)]<<"\033[0m";
 	return *this;
 }
 
-colorcout& colorcout::colorblock(b_color color,int x,int y)
+colorcout& colorcout::block(b_block type,int x,int y,b_color color)
 {
 	cursor(c_cmd::SET_x_y,x,y);
-	colorblock(color);
+	block(type,color);
 	return *this;
 }
-colorcout& colorcout::colorblock(b_color color,int x,int y,int n)
+
+colorcout& colorcout::block(b_block type,int x,int y,int n,b_color color)
 {
 	std::string s("m");
 
@@ -242,8 +328,29 @@ colorcout& colorcout::colorblock(b_color color,int x,int y,int n)
 	std::cout <<"\033[0;" <<static_cast<int>(color);
 
 	for(int i=0;i<n;i++)
-		s.append(" ");
+		s+=sg_block[static_cast<int>(type)];
 	std::cout << s << "\033[0m";
+	return *this;
+}
+
+colorcout& colorcout::colorblock(b_color color,int n)
+{
+	std::string a("m");
+	int tmp = static_cast<int>(color);
+	if(b_color::HOLD == color)
+		tmp = 0;
+	if(0 != tmp)
+		tmp += 10;
+	for(int i=0;i<n;i++)
+		a += " ";
+	std::cout <<"\033[0;" << tmp << a << "\033[0m";
+	return *this;
+}
+
+colorcout& colorcout::colorblock(b_color color,int x,int y,int n)
+{
+	ccout.cursor(c_cmd::SET_x_y,x,y);
+	colorblock(color,n);
 	return *this;
 }
 
