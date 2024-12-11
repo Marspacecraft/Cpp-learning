@@ -54,40 +54,6 @@ static const char* sg_block[] =
 	"■",// 27 EDGE_FULL
 };
 
-
-/*
-const char b_type::BLOCK_DOWN_1_8[] = "▁"; 
-const char b_type::BLOCK_DOWN_2_8[] = "▂"; 
-const char b_type::BLOCK_DOWN_3_8[] = "▃"; 
-const char b_type::BLOCK_DOWN_4_8[] = "▄"; 
-const char b_type::BLOCK_DOWN_5_8[] = "▅";
-const char b_type::BLOCK_DOWN_6_8[] = "▆"; 
-const char b_type::BLOCK_DOWN_7_8[] = "▇"; 
-
-const char b_type::BLOCK_LEFT_1_8[] = "▏";
-const char b_type::BLOCK_LEFT_2_8[] = "▎";
-const char b_type::BLOCK_LEFT_3_8[] = "▍";
-const char b_type::BLOCK_LEFT_4_8[] = "▌";
-const char b_type::BLOCK_LEFT_5_8[] = "▋";
-const char b_type::BLOCK_LEFT_6_8[] = "▊";
-const char b_type::BLOCK_LEFT_7_8[] = "▉";
-
-const char b_type::BLOCK_UP_4_8[] = "▀"; 
-const char b_type::BLOCK_RIGHT_4_8[] = "▐";
-const char b_type::BLOCK_FULL[] = "█"; 
-
-const char b_type::EDGE_1_1[] = "▖"; 
-const char b_type::EDGE_1_2[] = "▘";
-const char b_type::EDGE_1_3[] = "▝"; 
-const char b_type::EDGE_1_4[] = "▗";
-const char b_type::EDGE_2_1[] = "▚";
-const char b_type::EDGE_2_3[] = "▞";
-const char b_type::EDGE_3_1[] = "▙";
-const char b_type::EDGE_3_2[] = "▛";
-const char b_type::EDGE_3_3[] = "▜";
-const char b_type::EDGE_3_4[] = "▟";
-const char b_type::EDGE_FULL[] = "■";
-*/
 colorcout& colorcout::font(f_color font)
 {
 	static colorcout fontcout;
